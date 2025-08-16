@@ -1,0 +1,155 @@
+{
+	"name": "dataflow2",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "customers"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "products"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sales"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "inJoinProduct"
+				},
+				{
+					"name": "inJoinCustomers"
+				},
+				{
+					"name": "selColumns"
+				},
+				{
+					"name": "calRevenue"
+				},
+				{
+					"name": "revenuePerRegion"
+				},
+				{
+					"name": "addRevenueDate"
+				},
+				{
+					"name": "avgOrderValuePerCategory"
+				},
+				{
+					"name": "top3SpendersPerRegion"
+				},
+				{
+					"name": "top3Spenders"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as short,",
+				"          CustomerName as string,",
+				"          Region as string",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     limit: 100,",
+				"     ignoreNoFilesFound: false,",
+				"     purgeFiles: true,",
+				"     format: 'delimited',",
+				"     container: 'landing',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     wildcardPaths:['mdf/customer/*.csv']) ~> customers",
+				"source(output(",
+				"          ProductID as short,",
+				"          ProductName as string,",
+				"          Category as string,",
+				"          Price as integer",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     limit: 100,",
+				"     ignoreNoFilesFound: false,",
+				"     purgeFiles: true,",
+				"     format: 'delimited',",
+				"     container: 'landing',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     wildcardPaths:['mdf/product/*.csv']) ~> products",
+				"source(output(",
+				"          SaleID as short,",
+				"          CustomerID as short,",
+				"          ProductID as short,",
+				"          Quantity as short,",
+				"          SaleDate as date",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     limit: 100,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     container: 'landing',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     wildcardPaths:['mdf/sales/*.csv']) ~> sales",
+				"sales, products join(sales@ProductID == products@ProductID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> inJoinProduct",
+				"inJoinProduct, customers join(sales@CustomerID == customers@CustomerID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> inJoinCustomers",
+				"inJoinCustomers select(mapColumn(",
+				"          SaleID,",
+				"          CustomerID = sales@CustomerID,",
+				"          ProductID = sales@ProductID,",
+				"          Quantity,",
+				"          SaleDate,",
+				"          ProductID = products@ProductID,",
+				"          ProductName,",
+				"          Category,",
+				"          Price,",
+				"          CustomerID = customers@CustomerID,",
+				"          CustomerName,",
+				"          Region",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selColumns",
+				"selColumns derive(revenue = Quantity*Price) ~> calRevenue",
+				"calRevenue aggregate(groupBy(Region),",
+				"     TotalRevenue = sum(revenue)) ~> revenuePerRegion",
+				"revenuePerRegion derive(revenueDate = currentDate()) ~> addRevenueDate",
+				"calRevenue aggregate(groupBy(Category),",
+				"     avgOrderValue = round(avg(revenue),2)) ~> avgOrderValuePerCategory",
+				"calRevenue window(over(Region),",
+				"     desc(revenue, true),",
+				"     rank = denseRank()) ~> top3SpendersPerRegion",
+				"top3SpendersPerRegion filter(rank <= 3) ~> top3Spenders"
+			]
+		}
+	}
+}
