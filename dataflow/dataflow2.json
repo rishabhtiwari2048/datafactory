@@ -26,7 +26,29 @@
 					"name": "sales"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "snktop3Spenders"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "snkAvgOrderValuePerCategory"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "snkRevenuePerRegion"
+				}
+			],
 			"transformations": [
 				{
 					"name": "inJoinProduct"
@@ -148,7 +170,29 @@
 				"calRevenue window(over(Region),",
 				"     desc(revenue, true),",
 				"     rank = denseRank()) ~> top3SpendersPerRegion",
-				"top3SpendersPerRegion filter(rank <= 3) ~> top3Spenders"
+				"top3SpendersPerRegion filter(rank <= 3) ~> top3Spenders",
+				"top3Spenders sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     container: 'landing',",
+				"     folderPath: 'mdf/output/top3Spenders',",
+				"     truncate: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> snktop3Spenders",
+				"avgOrderValuePerCategory sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     container: 'landing',",
+				"     folderPath: 'mdf/output/avgOrderValuePerCategory',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> snkAvgOrderValuePerCategory",
+				"addRevenueDate sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     container: 'landing',",
+				"     folderPath: 'mdf/output/revenuePerRegion',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> snkRevenuePerRegion"
 			]
 		}
 	}
