@@ -5,13 +5,16 @@
 		"annotations": [],
 		"type": "AzureSqlDatabase",
 		"typeProperties": {
-			"server": "rishabhsqldb1.database.windows.net",
-			"database": "rishabhsqldb1",
+			"server": "rishabhdb.database.windows.net",
+			"database": "rishabhdb",
 			"encrypt": "mandatory",
 			"trustServerCertificate": false,
 			"authenticationType": "SQL",
 			"userName": "rishabhadmin",
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDc3MkJBOTIzLTU0MkEtNDY0OC05RTJBLUQ1QzgwQTE4RjI1NV84YzRiODgwZi04NTc3LTQ5YTAtYjNlYS02OGM3OTU1YTU2NjAiDQp9"
+			"alwaysEncryptedSettings": {
+				"alwaysEncryptedAkvAuthType": "ManagedIdentity"
+			},
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDc3MkJBOTIzLTU0MkEtNDY0OC05RTJBLUQ1QzgwQTE4RjI1NV9kNjBjNmM3My0xMGFiLTQ1N2UtOTc3ZC0yYmQ3NjJjYjRmMjMiDQp9"
 		}
 	}
 }
