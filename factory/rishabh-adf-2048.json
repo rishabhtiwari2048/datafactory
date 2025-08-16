@@ -1,0 +1,9 @@
+{
+	"name": "rishabh-adf-2048",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "4494d55d-3e9c-4ac2-bd4d-270346f51f50",
+		"tenantId": "03fb6c76-e23c-40b4-8d6a-4a007f02810e"
+	}
+}
