@@ -1,0 +1,105 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "rishabh-adf-2048"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
+		"LS_ADLS_SALES_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_ADLS_SALES'"
+		},
+		"LS_Azure_SQL_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_Azure_SQL'"
+		},
+		"LS_ADLS_SALES_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://rishabhadfstoacc.dfs.core.windows.net/"
+		},
+		"LS_Azure_SQL_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "rishabhdb.database.windows.net"
+		},
+		"LS_Azure_SQL_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "rishabhdb"
+		},
+		"LS_Azure_SQL_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rishabhadmin"
+		},
+		"trigger1_properties_pipeline2_parameters_file_name": {
+			"type": "string",
+			"defaultValue": "@triggerBody().fileName"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/dee27013-ce74-4fef-a597-e428d7ff7777/resourceGroups/rishabh-adf-rg/providers/Microsoft.Storage/storageAccounts/rishabhadfstoacc"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "rishabh-adf-2048_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureBlobStorage1_connectionString": {
+						"value": "[parameters('AzureBlobStorage1_connectionString')]"
+					},
+					"LS_ADLS_SALES_accountKey": {
+						"value": "[parameters('LS_ADLS_SALES_accountKey')]"
+					},
+					"LS_Azure_SQL_password": {
+						"value": "[parameters('LS_Azure_SQL_password')]"
+					},
+					"LS_ADLS_SALES_properties_typeProperties_url": {
+						"value": "[parameters('LS_ADLS_SALES_properties_typeProperties_url')]"
+					},
+					"LS_Azure_SQL_properties_typeProperties_server": {
+						"value": "[parameters('LS_Azure_SQL_properties_typeProperties_server')]"
+					},
+					"LS_Azure_SQL_properties_typeProperties_database": {
+						"value": "[parameters('LS_Azure_SQL_properties_typeProperties_database')]"
+					},
+					"LS_Azure_SQL_properties_typeProperties_userName": {
+						"value": "[parameters('LS_Azure_SQL_properties_typeProperties_userName')]"
+					},
+					"trigger1_properties_pipeline2_parameters_file_name": {
+						"value": "[parameters('trigger1_properties_pipeline2_parameters_file_name')]"
+					},
+					"trigger1_properties_typeProperties_scope": {
+						"value": "[parameters('trigger1_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
